@@ -36,7 +36,14 @@ function loadEntryImage(): Buffer {
 function main(): void {
   const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
   mkdirSync(outDir, { recursive: true });
-  writeFileSync(join(outDir, 'entry.png'), loadEntryImage());
+  const image = loadEntryImage();
+  const outPath = join(outDir, 'entry.png');
+  writeFileSync(outPath, image);
+  console.log(`wrote ${outPath}: ${image.length} bytes`);
+  const written = readFileSync(outPath);
+  if (written.length !== image.length) {
+    throw new Error('entry.png was not written completely');
+  }
 }
 
 main();
